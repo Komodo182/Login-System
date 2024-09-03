@@ -61,12 +61,20 @@ namespace Login_System
 
         private void btnRegister_Click(object sender, RoutedEventArgs e)
         {
-            using var connection = new MySqlConnection(connStr);
-            connection.Open();
-            using var command = new MySqlCommand("INSERT INTO users (username, password) VALUES (@paramUsername, @paramPassword)", connection);
-            command.Parameters.AddWithValue("@paramUsername", txtUsername.Text);
-            command.Parameters.AddWithValue("@paramPassword", txtPassword.Text);
-            command.ExecuteNonQuery();
+            try
+            {
+                using var connection = new MySqlConnection(connStr);
+                connection.Open();
+                using var command = new MySqlCommand("INSERT INTO users (username, password) VALUES (@paramUsername, @paramPassword)", connection);
+                command.Parameters.AddWithValue("@paramUsername", txtUsername.Text);
+                command.Parameters.AddWithValue("@paramPassword", txtPassword.Text);
+                command.ExecuteNonQuery();
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Username is taken!");
+            }
+            
         }
 
         private void btnDelete_Click(object sender, RoutedEventArgs e)
