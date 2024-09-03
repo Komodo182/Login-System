@@ -11,14 +11,19 @@ namespace Unit_Testing
         }
 
         [Test]
-        public void Test1()
+        public void TestValidationNotEmpty()
         {
-            Assert.True(Utils.Validate());
+            Assert.True(Utils.Validate("anything"));
         }
         [Test]
-        public void Test2()
+        public void TestValidationEmpty()
         {
-            Assert.That(Utils.login, Is.EqualTo(0));
+            Assert.False(Utils.Validate(""));
+        }
+        [Test]
+        public void Mario()
+        {
+            Assert.That(Utils.login("matt,shush"), Is.EqualTo(0));
         }
     }
 }

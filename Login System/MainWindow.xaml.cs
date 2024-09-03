@@ -69,14 +69,15 @@ namespace Login_System
                 command.Parameters.AddWithValue("@paramUsername", txtUsername.Text);
                 command.Parameters.AddWithValue("@paramPassword", txtPassword.Text);
                 command.ExecuteNonQuery();
+                //MessageBox.Show("Account has been registered with these credentials.");
             }
             catch (Exception)
             {
-                MessageBox.Show("Username is taken!");
+                MessageBox.Show("Username is taken! Please try a different one.");
             }
             
         }
-
+        
         private void btnDelete_Click(object sender, RoutedEventArgs e)
         {
             using var connection = new MySqlConnection(connStr);
