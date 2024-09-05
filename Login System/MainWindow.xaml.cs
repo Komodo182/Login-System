@@ -33,59 +33,85 @@ namespace Login_System
         }
 
         private void btnLogin_Click(object sender, RoutedEventArgs e)
-        {
+        { 
+            int userid;
             //validate
-            if (Utils.Validate(txtUsername.Text) && Utils.Validate(txtPassword.Text))
+            if (Utils.ValidateEmpty(txtUsername.Text)&&Utils.ValidateEmpty(txtPassword.Text))
             {
-                using var connection = new MySqlConnection(connStr);
-                connection.Open();
-                using var command = new MySqlCommand("SELECT userid FROM users WHERE username = @paramUsername AND password = @paramPassword", connection);
-                command.Parameters.AddWithValue("@paramUsername", txtUsername.Text);
-                command.Parameters.AddWithValue("@paramPassword", txtPassword.Text);
-                using var reader = command.ExecuteReader();
-                if (reader.Read())
+                userid = Utils.login(txtUsername.Text, txtPassword.Text);
+                if (userid != 0) 
                 {
-                    MessageBox.Show($"User {txtUsername.Text} has ID {reader.GetInt32(0)}");
+                    MessageBox.Show("Logged In!");
+                    MessageBox.Show("Well done there's nothing else with logging in and yes this is completely useless XD");
                 }
                 else
                 {
-                    MessageBox.Show($"User {txtUsername.Text} not found");
+                    MessageBox.Show("Unsuccessful Log in.");
                 }
             }
             else
             {
-                MessageBox.Show("Textbox was blank!");
+                MessageBox.Show("Test box was empty. Please try again.");
             }
-
         }
 
         private void btnRegister_Click(object sender, RoutedEventArgs e)
         {
-            try
+            int tempsearchid;
+            //validate
+            if (Utils.ValidateEmpty(txtUsername.Text)&&Utils.ValidateEmpty(txtPassword.Text)) 
             {
-                using var connection = new MySqlConnection(connStr);
-                connection.Open();
-                using var command = new MySqlCommand("INSERT INTO users (username, password) VALUES (@paramUsername, @paramPassword)", connection);
-                command.Parameters.AddWithValue("@paramUsername", txtUsername.Text);
-                command.Parameters.AddWithValue("@paramPassword", txtPassword.Text);
-                command.ExecuteNonQuery();
-                //MessageBox.Show("Account has been registered with these credentials.");
+                tempsearchid = Utils.ValidateActiveInRegistry(txtUsername.Text);
+                //userid = Utils.register(txtUsername.Text,txtPassword.Text);
+                if (tempsearchid != 0)
+                {
+                    MessageBox.Show("An account with this username has been already created.");
+                }
+                else
+                {
+                    MessageBox.Show("No account has been created with these credicentials yet. Creating an account now...");
+                    Utils.registerAcc(txtUsername.Text, txtPassword.Text);
+                }
             }
-            catch (Exception)
+            else
             {
-                MessageBox.Show("Username is taken! Please try a different one.");
-            }
-            
+                MessageBox.Show("Text box was empty. Please try again.");
+            }   
         }
         
         private void btnDelete_Click(object sender, RoutedEventArgs e)
         {
-            using var connection = new MySqlConnection(connStr);
-            connection.Open();
-            using var command = new MySqlCommand("DELETE FROM users WHERE username = @paramUsername AND password = @paramPassword", connection);
-            command.Parameters.AddWithValue("@paramUsername", txtUsername.Text);
-            command.Parameters.AddWithValue("@paramPassword", txtPassword.Text);
-            command.ExecuteNonQuery();
+            int tempsearchid;
+            int userid;
+            //validate
+            if (Utils.ValidateEmpty(txtUsername.Text) && Utils.ValidateEmpty(txtPassword.Text))
+            {
+                tempsearchid = Utils.ValidateActiveInRegistry(txtPassword.Text);
+                if (tempsearchid != 0)
+                {
+                    userid = Utils.login(txtUsername.Text, txtPassword.Text);
+                    if (userid != 0)
+                    {
+                        MessageBox.Show("Username and Password successfully verified!");
+                        if (MessageBox.Show("Are you sure you'd like to delete this account?", "Final Warning!", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                        {
+                            Utils.deleteAcc(txtUsername.Text, txtPassword.Text);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Process has been terminated.");
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("Unsuccessful Verification of Username and Password for this action.");
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Account with this username couldnt be found, please try again.");
+                }
+            }
         }
     }
 }
